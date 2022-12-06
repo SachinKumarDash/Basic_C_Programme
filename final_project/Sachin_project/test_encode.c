@@ -1,0 +1,125 @@
+/* Documentation
+Name : Sachin Kumar Dash
+Date : 21 Oct 2022
+Description : LSB Steganography
+Encrypting a secret message with the lsb bits of an image as an encoder and the decoder will extract the original message from the ecoded image.
+
+Sample Execution :
+1.For Encoding, execute the program by providing the choice -e followed by any image with the secret data file followed by the output file you wanted to create.
+$ ./a.out -e beautiful.bmp secret.txt stego.bmp
+Chosen Encoding
+Read and validate encode arguments is a success
+<------Started Encoding------>
+Open files is a success
+width = 1024
+height = 768
+Check capacity is a success
+Copied bmp header successfully
+Encoded magic string successfully
+Encoded secret file extn size
+Encoded secret file extn
+Encoded secret file size
+Encoded secret file data
+Copied remaining data
+<--------Completed encoding-------->
+
+2.For Decoding
+$ ./a.out -d stego.bmp decode.txt
+Chosen Decoding
+Read and validate decode arguments is a success
+<------Started Decoding------>
+Open files is a success
+Decoded magic string Successfully
+Decoded file extension size Succesfully
+Decoded Secret File Extension Succesfully
+Decoded secret file size Successfully
+Decoded secret file data Succuessfully
+<---------Completed decoding--------->
+*/
+
+#include <stdio.h>
+#include <string.h>
+#include "encode.h"
+#include "types.h"
+#include "common.h"
+#include "decode.h"
+
+/* Passing arguments through command line arguments */
+int main(int argc, char *argv[])
+{
+
+   //checking for the argc
+   if (argc >= 3)
+   {
+
+    // Function call for check operation type
+    if (check_operation_type(argv) == e_encode)
+    {
+        printf("\n\t*************************************Chosen Encoding*************************************\n");
+
+        // Declare structure variable
+        EncodeInfo encInfo;
+        // Read and validate encode arguments 
+        if (read_and_validate_encode_args(argv, &encInfo) == e_success)
+        {
+            printf("Read and validate encode arguments is a success\n");
+            printf("<------Started Encoding------>\n");
+
+            // Function call for encoding
+            if (do_encoding(&encInfo) == e_success)
+            {
+                printf("\n\t*************************************Encoding Completed*************************************\n");
+            }
+            else
+            {
+                printf("Failed to encode\n");
+                return -1;
+            }
+        }
+        else
+        {
+            printf("Read and validate encode arguments is a failure\n");
+            return -1;
+        }
+    }
+    // Function call for check operation type
+    else if (check_operation_type(argv) == e_decode)
+    {
+        printf("\n\t*************************************Chosen Decoding*************************************\n");
+
+        // Declare structure variables
+        DecodeInfo decInfo;
+        if (read_and_validate_decode_args(argv, &decInfo) == d_success)
+        {
+            printf("Read and validate decode arguments is a success\n");
+            printf("<------Started Decoding------>\n");
+
+            // Function call for do decoding
+            if (do_decoding(&decInfo) == d_success)
+            {
+                printf("\n\t*************************************Completed Decoding*************************************\n");
+            }
+            else
+            {
+                printf("Failed to decode\n");
+                return -1;
+            }
+        }  
+        else
+        {
+            printf("Read and validate decode arguments is a failure\n");
+            return -1;
+        }
+    } 
+    else
+    {
+        printf("Invalid option\nKindly pass for\nEncoding: ./a.out -e beautiful.bmp secret.txt stego.bmp\nDecoding: ./a.out -d stego.bmp decode.txt\n");
+    }
+  }
+ else
+ {
+        printf("Error : Kindly pass for\nEncoding: 4 arguments\nDecoding: 3 arguments\n");
+ }
+
+    return 0;
+}
